@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="customer_type_selector_form" model="ir.ui.view">
+        <field name='name'>customer.type.selector.form</field>
+        <field name='model'>customer.type.selector</field>
+        <field name='arch' type='xml'>
+            <form string='Customer Type Update Wizard'>
+               <sheet>
+                   <group>
+                   <field name="customer_type"/>
+                   <field name="price_list" attrs="{'invisible': [('customer_type', '=', 'free')],
+                   'required': [('customer_type', '!=', 'free')]}" options="{'no_create': True}"
+                          />
+                   </group>
+                </sheet>
+                  <footer>
+                      <button string='update' name="change_type" type="object" class="btn-primary"/>
+                       <button string='Cancel' special="cancel"  type="object" class="btn-primary"/>
+                  </footer>
+            </form>
+        </field>
+    </record>
+    <act_window
+        id="action_customer_type_selector"
+        res_model="customer.type.selector"
+        binding_model="res.partner"
+        binding_views="list"
+        target="new"
+        view_mode="form"
+        name="Customer Type Update Payment"
+    />
+
+</odoo>
