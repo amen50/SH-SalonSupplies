@@ -14,6 +14,10 @@
         "views/res_partner.xml",
         "views/product_template.xml",
         "views/sale_order_line.xml",
+        "views/product_variant.xml",
+        "views/account_move.xml",
         "wizard/customer_type_selector.xml",
+        "wizard/sales_report.xml",
+        "report/invoice_report.xml"
     ],
 }
