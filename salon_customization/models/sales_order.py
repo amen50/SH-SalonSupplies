@@ -9,7 +9,6 @@ class SalesOrderLine(models.Model):
     custom_id = fields.Float(string='custom id', store=True)
     updated = fields.Boolean(string='updated', store=True)
 
-
     @api.onchange('product_uom_qty')
     def _product_uom_qty_salon_change(self):
         for rec in self:
@@ -27,6 +26,13 @@ class SalesOrderLine(models.Model):
                     if rec.custom_id == new.custom_id and rec.id != new.id and new.is_free:
                         new.product_uom_qty = 0
         return super(SalesOrderLine, self).unlink()
+
+    @api.model
+    def create(self, vals_list):
+        res = super(SalesOrderLine, self).create(vals_list)
+        if res.sequence > 200 and not res.is_free:
+            res.sequence = 200 - res.sequence
+        return res
 
 
 class SaleOrder(models.Model):
@@ -63,7 +69,8 @@ class SaleOrder(models.Model):
                                                 new_line = self.env['sale.order.line'].new({
                                                     'product_id': line.product_id or free.free_product.id,
                                                     'product_template_id': free.free_product.product_tmpl_id.id or line.product_tmpl_id.id,
-                                                    'name': line.product_id.name_get()[0][1] or free.free_product.name_get()[0][1],
+                                                    'name': line.product_id.name_get()[0][1] or
+                                                            free.free_product.name_get()[0][1],
                                                     'product_uom_qty': free.free_qty,
                                                     'is_free': True,
                                                     'price_unit': 0,
@@ -92,7 +99,8 @@ class SaleOrder(models.Model):
                                                 new_line = self.env['sale.order.line'].new({
                                                     'product_id': line.product_id or free.free_product.id,
                                                     'product_template_id': free.free_product.product_tmpl_id.id or line.product_id.product_tmpl_id.id,
-                                                    'name': line.product_id.name_get()[0][1] or free.free_product.name_get()[0][1],
+                                                    'name': line.product_id.name_get()[0][1] or
+                                                            free.free_product.name_get()[0][1],
                                                     'product_uom_qty': free.free_qty,
                                                     'price_unit': 0,
                                                     'is_free': True,
@@ -107,10 +115,10 @@ class SaleOrder(models.Model):
                                                 flag = True
                             if not flag:
                                 for upd in self.order_line:
-                                      if line.product_template_id == upd.product_template_id:
-                                           upd.updated = False
-                                           upd.is_free_given = False
-                                           dup_qty = 0
+                                    if line.product_template_id == upd.product_template_id:
+                                        upd.updated = False
+                                        upd.is_free_given = False
+                                        dup_qty = 0
                     if not line.is_free_given and not line.is_free and line.product_id.product_type != 'no_free':
                         if line.product_id.product_type == 'can_be_added':
                             for dup in self.order_line:
@@ -136,7 +144,8 @@ class SaleOrder(models.Model):
                                         new_line = self.env['sale.order.line'].new({
                                             'product_id': line.product_id or free.free_product.id,
                                             'product_template_id': line.product_id.product_tmpl_id.id or free.free_product.product_tmpl_id.id,
-                                            'name': free.free_product.name_get()[0][1] or line.product_id.name_get()[0][1],
+                                            'name': free.free_product.name_get()[0][1] or line.product_id.name_get()[0][
+                                                1],
                                             'product_uom_qty': free.free_qty,
                                             'is_free': True,
                                             'price_unit': 0,
@@ -163,7 +172,8 @@ class SaleOrder(models.Model):
                                         new_line = self.env['sale.order.line'].new({
                                             'product_id': line.product_id or free.free_product.id,
                                             'product_template_id': line.product_id.product_tmpl_id.id or free.free_product.product_tmpl_id.id,
-                                            'name':  line.product_id.name_get()[0][1] or free.free_product.name_get()[0][1],
+                                            'name': line.product_id.name_get()[0][1] or free.free_product.name_get()[0][
+                                                1],
                                             'product_uom_qty': free.free_qty,
                                             'is_free': True,
                                             'price_unit': 0,
@@ -188,6 +198,10 @@ class SaleOrder(models.Model):
                         orginal = True
                 if not orginal:
                     line.product_uom_qty = 0
+            elif line.sequence != 200:
+                if line.sequence > 200:
+                    line.sequence = 200 - line.sequence
+
         return res
 
     @api.onchange('partner_id')

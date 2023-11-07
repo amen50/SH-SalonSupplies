@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        
+        <record id="report_wizard_view_form" model="ir.ui.view">
+            <field name="name">report_wizard_view_inherit_form</field>
+            <field name="model">wizard.sales.report</field>
+            <field name="arch" type="xml">
+                <form string="Select period">
+                        <group>
+                            <group >
+                                <field name="datefrom"/>
+                            </group>
+                            <group >
+                                <field name="dateto"/>
+                            </group>
+                            <group col="2">
+                                <field name="partner_select" widget="many2many_tags"/>
+                                <field name="partner_boolean" string="All"/>
+                            </group>
+                            <group >
+                                <field name="customer_id"/>
+                                <field name="customer_boolean" string="All"/>
+
+                            </group>
+                        </group>
+                    <footer>
+                        <button name="print_project_report_xls" type="object" string="Print XLS" class="oe_highlight"/>
+                        <button special="cancel" string="Cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="salon_sales_report_wizard_action" model="ir.actions.act_window">
+        <field name="name">Customer sales report</field>
+        <field name="res_model">wizard.sales.report</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <menuitem
+        id="salon_sales_report_menu"
+        action="salon_sales_report_wizard_action"
+        parent="sale.menu_sale_report"
+        sequence="30"
+    />
+    <menuitem
+        id="graphical_sales_report_menu"
+        action="sale.action_order_report_all"
+        parent="sale.menu_sale_report"
+        sequence="20"
+    />
+
+
+    </data>
+</odoo>

@@ -17,7 +17,7 @@
         "views/product_variant.xml",
         "views/account_move.xml",
         "wizard/customer_type_selector.xml",
-        "wizard/sales_report.xml",
+        # "wizard/sales_report.xml",
         "report/invoice_report.xml"
     ],
 }

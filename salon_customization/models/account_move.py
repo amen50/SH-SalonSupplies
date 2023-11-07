@@ -26,6 +26,12 @@ class AccountMove(models.Model):
             arr.append({'name': pr, 'qty': product_quantity[pr]})
         arr.append({'name': "Total", 'qty': total})
         arr = [(0, 0, item) for item in arr]
+        record = next((record for record in arr if record[2]['name'] == ' '), None)
+        if not record:
+            record = next((record for record in arr if record[2]['name'] == False), None)
+        if record:
+            arr.remove(record)
+            arr.insert(0, record)
         res.write({'product_group': arr})
         return res
 
@@ -55,10 +61,7 @@ class AccountMove(models.Model):
         if record:
             arr.remove(record)
             arr.insert(0, record)
-        print("record", record)
-        print("arr", arr)
         self.write({'product_group': arr})
-        print("self.product_group", self.product_group)
 
 
 class ProductGroup(models.Model):
