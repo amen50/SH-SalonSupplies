@@ -11,9 +11,9 @@
                 </xpath>
                 <xpath expr="//field[@name='order_line']/tree/field[1]" position="before">
                     <field name="is_free" readonly="1" force_save="1"/>
-                    <field name="custom_id" readonly="1" force_save="1" />
-                    <field name="updated" readonly="1" force_save="1" />
-                    <field name="is_free_given" readonly="1" force_save="1" />
+                    <field name="custom_id" readonly="1" force_save="1" invisible="1"/>
+                    <field name="updated" readonly="1" force_save="1" invisible="1"/>
+                    <field name="is_free_given" readonly="1" force_save="1" invisible="1"/>
                 </xpath>
             </field>
         </record>
