@@ -1,10 +1,29 @@
-from odoo import fields, models, api
+from odoo import fields, models, api, _
+from odoo.exceptions import UserError, ValidationError
 
 
 class ProductTemplateInherit(models.Model):
     _inherit = 'product.template'
 
     free_product = fields.One2many(string="Free items", comodel_name='free.product', inverse_name='product_template')
+
+
+class ProductProductInherit(models.Model):
+    _inherit = 'product.product'
+
+    product_type = fields.Selection([('can_be_added', 'can be add'),
+                                     ('not_add', 'can not be add'),
+                                     ('no_free', 'no free item')], default='can_be_added', required=True,
+                                    string='Free Item calculation')
+    line = fields.Char(string="hold line variant value")
+
+    @api.model
+    def create(self, vals):
+       res = super(ProductProductInherit, self).create(vals)
+       for line in res.product_template_attribute_value_ids:
+           if line.attribute_id.is_line:
+               res.line = line.name
+       return res
 
 
 class FreeProduct(models.Model):
@@ -17,4 +36,18 @@ class FreeProduct(models.Model):
         'product.product',
         string='Product Variant', required=True)
     product_template = fields.Many2one('product.template', string="reveres field")
-    
+
+
+class ProductAttributeValue(models.Model):
+    _inherit = "product.attribute"
+
+    is_line = fields.Boolean(string='is used for grouping', default=False)
+
+    @api.onchange('is_line')
+    def _is_line_salon_change(self):
+        if self.is_line:
+            new = self.env['product.attribute'].search([('is_line', '=', True)])
+            if new:
+                self.is_line = False
+                raise UserError(_("There is already grouping variant. you can only one groping variant"))
+

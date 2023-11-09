@@ -1,0 +1,14 @@
+<odoo>
+    <data>
+         <record id="salon_customization_product_attribute_tree_inherit" model="ir.ui.view">
+            <field name="name">product.attribute.form.inherit</field>
+            <field name="model">product.attribute</field>
+            <field name="inherit_id" ref="product.product_attribute_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='name']" position="after">
+                    <field name="is_line" force_save="1"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

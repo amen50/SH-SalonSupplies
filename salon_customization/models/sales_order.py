@@ -27,6 +27,13 @@ class SalesOrderLine(models.Model):
                         new.product_uom_qty = 0
         return super(SalesOrderLine, self).unlink()
 
+    @api.model
+    def create(self, vals_list):
+        res = super(SalesOrderLine, self).create(vals_list)
+        if res.sequence > 200 and not res.is_free:
+            res.sequence = 200 - res.sequence
+        return res
+
 
 class SaleOrder(models.Model):
     _inherit = 'sale.order'
@@ -40,60 +47,145 @@ class SaleOrder(models.Model):
         if self.partner_id:
             if self.partner_id.customer_type == 'free':
                 for line in self.order_line:
-                    if line.updated:
+                    dup_qty = 0
+                    if line.updated and line.product_id.product_type != 'no_free':
                         flag = False
                         for new in self.order_line:
                             if line.custom_id == new.custom_id and line.id != new.id and new.is_free:
                                 self.order_line = self.order_line - new
-                                for free in line.product_template_id.free_product:
-                                    if free.sale_qty <= line.product_uom_qty <= free.sale_qty_to:
-                                        if free.free_product:
-                                            new_line = self.env['sale.order.line'].new({
-                                                'product_id': free.free_product.id or line.product_id,
-                                                'product_template_id': free.free_product.product_tmpl_id.id or line.product_tmpl_id.id,
-                                                'name': free.free_product.name_get()[0][1] or
-                                                        line.product_id.name_get()[0][1],
-                                                'product_uom_qty': free.free_qty,
-                                                'is_free': True,
-                                                'custom_id': self.custom_id + 1,
-                                                'sequence': self.seq_id,
+                                if line.product_id.product_type == 'can_be_added':
+                                    for dup in self.order_line:
+                                        if line.product_template_id == dup.product_template_id and dup.product_id.product_type == 'can_be_added':
+                                            if dup.product_template_id and not dup.is_free:
+                                                dup_qty = dup_qty + dup.product_uom_qty
+                                                dup.is_free_given = True
+                                                dup.custom_id = self.custom_id + 1
+                                            if dup.is_free:
+                                                self.order_line = self.order_line - dup
+                                if dup_qty == line.product_uom_qty:
+                                    for free in line.product_template_id.free_product:
+                                        if free.sale_qty <= line.product_uom_qty <= free.sale_qty_to:
+                                            if free.free_product:
+                                                new_line = self.env['sale.order.line'].new({
+                                                    'product_id': line.product_id or free.free_product.id,
+                                                    'product_template_id': free.free_product.product_tmpl_id.id or line.product_tmpl_id.id,
+                                                    'name': line.product_id.name_get()[0][1] or
+                                                            free.free_product.name_get()[0][1],
+                                                    'product_uom_qty': free.free_qty,
+                                                    'is_free': True,
+                                                    'price_unit': 0,
+                                                    'custom_id': self.custom_id + 1,
+                                                    'sequence': self.seq_id,
 
+                                                })
+                                                self.order_line += new_line
+                                                line.custom_id = self.custom_id + 1
+                                                self.custom_id = self.custom_id + 2
+                                                line.is_free_given = True
+                                                line.updated = False
+                                                flag = True
+                                elif dup_qty != line.product_uom_qty:
+                                    for free in line.product_template_id.free_product:
+                                        if free.sale_qty <= dup_qty <= free.sale_qty_to:
+                                            if free.free_product:
+                                                if self.seq_id == 200:
+                                                    new_section = self.env['sale.order.line'].new({
+                                                        'name': "Free Product",
+                                                        'display_type': 'line_section',
+                                                        'sequence': 200,
+                                                    })
+                                                    self.order_line += new_section
+                                                    self.seq_id = self.seq_id + 1
+                                                new_line = self.env['sale.order.line'].new({
+                                                    'product_id': line.product_id or free.free_product.id,
+                                                    'product_template_id': free.free_product.product_tmpl_id.id or line.product_id.product_tmpl_id.id,
+                                                    'name': line.product_id.name_get()[0][1] or
+                                                            free.free_product.name_get()[0][1],
+                                                    'product_uom_qty': free.free_qty,
+                                                    'price_unit': 0,
+                                                    'is_free': True,
+                                                    'custom_id': self.custom_id + 1,
+                                                    'sequence': self.seq_id,
+                                                })
+                                                self.order_line += new_line
+                                                self.custom_id = self.custom_id + 2
+                                                self.seq_id = self.seq_id + 1
+                                                line.is_free_given = True
+                                                line.updated = False
+                                                flag = True
+                            if not flag:
+                                for upd in self.order_line:
+                                    if line.product_template_id == upd.product_template_id:
+                                        upd.updated = False
+                                        upd.is_free_given = False
+                                        dup_qty = 0
+                    if not line.is_free_given and not line.is_free and line.product_id.product_type != 'no_free':
+                        if line.product_id.product_type == 'can_be_added':
+                            for dup in self.order_line:
+                                if line.product_template_id == dup.product_template_id and dup.product_id.product_type == 'can_be_added':
+                                    if dup.product_template_id and not dup.is_free:
+                                        dup_qty = dup_qty + dup.product_uom_qty
+                                        dup.is_free_given = True
+                                        dup.custom_id = self.custom_id + 1
+                                    if dup.is_free:
+                                        self.order_line = self.order_line - dup
+                        if dup_qty == 0:
+                            for free in line.product_template_id.free_product:
+                                if free.sale_qty <= line.product_uom_qty <= free.sale_qty_to:
+                                    if free.free_product:
+                                        if self.seq_id == 200:
+                                            new_section = self.env['sale.order.line'].new({
+                                                'name': "Free Product",
+                                                'display_type': 'line_section',
+                                                'sequence': 200,
                                             })
-                                            self.order_line += new_line
-                                            line.custom_id = self.custom_id + 1
-                                            self.custom_id = self.custom_id + 2
-                                            line.is_free_given = True
-                                            line.updated = False
-                                            flag = True
-                        if not flag:
-                            line.updated = False
-                            line.is_free_given = False
-                    if not line.is_free_given and not line.is_free:
-                        for free in line.product_template_id.free_product:
-                            if free.sale_qty <= line.product_uom_qty <= free.sale_qty_to:
-                                if free.free_product:
-                                    if self.seq_id == 200:
-                                        new_section = self.env['sale.order.line'].new({
-                                            'name': "Free Product",
-                                            'display_type': 'line_section',
-                                            'sequence': 200,
+                                            self.order_line += new_section
+                                            self.seq_id = self.seq_id + 1
+                                        new_line = self.env['sale.order.line'].new({
+                                            'product_id': line.product_id or free.free_product.id,
+                                            'product_template_id': line.product_id.product_tmpl_id.id or free.free_product.product_tmpl_id.id,
+                                            'name': free.free_product.name_get()[0][1] or line.product_id.name_get()[0][
+                                                1],
+                                            'product_uom_qty': free.free_qty,
+                                            'is_free': True,
+                                            'price_unit': 0,
+                                            'custom_id': self.custom_id + 1,
+                                            'sequence': self.seq_id,
                                         })
-                                        self.order_line += new_section
+                                        self.order_line += new_line
+                                        line.custom_id = self.custom_id + 1
+                                        self.custom_id = self.custom_id + 2
                                         self.seq_id = self.seq_id + 1
-                                    new_line = self.env['sale.order.line'].new({
-                                        'product_id': free.free_product.id or line.product_id,
-                                        'product_template_id': free.free_product.product_tmpl_id.id or line.product_tmpl_id.id,
-                                        'name': free.free_product.name_get()[0][1] or line.product_id.name_get()[0][1],
-                                        'product_uom_qty': free.free_qty,
-                                        'is_free': True,
-                                        'custom_id': self.custom_id + 1,
-                                        'sequence': self.seq_id,
-                                    })
-                                    self.order_line += new_line
-                                    line.custom_id = self.custom_id + 1
-                                    self.custom_id = self.custom_id + 2
-                                    self.seq_id = self.seq_id + 1
-                                    line.is_free_given = True
+                                        line.is_free_given = True
+                        elif dup_qty != 0:
+                            for free in line.product_template_id.free_product:
+                                if free.sale_qty <= dup_qty <= free.sale_qty_to:
+                                    if free.free_product:
+                                        if self.seq_id == 200:
+                                            new_section = self.env['sale.order.line'].new({
+                                                'name': "Free Product",
+                                                'display_type': 'line_section',
+                                                'sequence': 200,
+                                            })
+                                            self.order_line += new_section
+                                            self.seq_id = self.seq_id + 1
+                                        new_line = self.env['sale.order.line'].new({
+                                            'product_id': line.product_id or free.free_product.id,
+                                            'product_template_id': line.product_id.product_tmpl_id.id or free.free_product.product_tmpl_id.id,
+                                            'name': line.product_id.name_get()[0][1] or free.free_product.name_get()[0][
+                                                1],
+                                            'product_uom_qty': free.free_qty,
+                                            'is_free': True,
+                                            'price_unit': 0,
+                                            'custom_id': self.custom_id + 1,
+                                            'sequence': self.seq_id,
+                                        })
+                                        self.order_line += new_line
+                                        self.custom_id = self.custom_id + 2
+                                        self.seq_id = self.seq_id + 1
+                                        line.is_free_given = True
+                                    else:
+                                        self.custom_id = self.custom_id + 2
 
     @api.model
     def create(self, vals):
@@ -106,6 +198,10 @@ class SaleOrder(models.Model):
                         orginal = True
                 if not orginal:
                     line.product_uom_qty = 0
+            elif line.sequence != 200:
+                if line.sequence > 200:
+                    line.sequence = 200 - line.sequence
+
         return res
 
     @api.onchange('partner_id')
