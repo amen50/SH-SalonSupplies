@@ -3,3 +3,4 @@ access_select_customer_type,access.customer.select.type,model_customer_type_sele
 access_free_product,access.free.product,model_free_product,sales_team.group_sale_salesman,1,1,1,1
 access_sales_report,access.sale.report,model_salon_sales_report,sales_team.group_sale_salesman,1,1,1,1
 access_product_group,access.product.group,model_product_group,sales_team.group_sale_salesman,1,1,1,1
+access_product_group_free,access.product.free.group,model_free_product_attribute,sales_team.group_sale_salesman,1,1,1,1

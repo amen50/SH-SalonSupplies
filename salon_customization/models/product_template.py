@@ -16,6 +16,7 @@ class ProductProductInherit(models.Model):
                                      ('no_free', 'no free item')], default='can_be_added', required=True,
                                     string='Free Item calculation')
     line = fields.Char(string="hold line variant value")
+    free_product = fields.One2many(string="Free items", comodel_name='free.product.attribute', inverse_name='product_product')
 
     @api.model
     def create(self, vals):
@@ -24,6 +25,13 @@ class ProductProductInherit(models.Model):
            if line.attribute_id.is_line:
                res.line = line.name
        return res
+
+    @api.onchange('product_type')
+    def _product_type_salon_change(self):
+        print("product_type", self.product_type)
+        if self.product_type != 'can_be_added':
+            for line in self.free_product:
+                line.unlink()
 
 
 class FreeProduct(models.Model):
@@ -34,8 +42,20 @@ class FreeProduct(models.Model):
     free_qty = fields.Float(string="Free quantity")
     free_product = fields.Many2one(
         'product.product',
-        string='Product Variant', required=True)
+        string='Product Variant', required=False)
     product_template = fields.Many2one('product.template', string="reveres field")
+
+
+class FreeProduct(models.Model):
+    _name = 'free.product.attribute'
+
+    sale_qty = fields.Float(string="Sales quantity From")
+    sale_qty_to = fields.Float(string="Sales quantity To")
+    free_qty = fields.Float(string="Free quantity")
+    free_product = fields.Many2one(
+        'product.product',
+        string='Product Variant', required=False)
+    product_product = fields.Many2one('product.product', string="reveres field")
 
 
 class ProductAttributeValue(models.Model):
