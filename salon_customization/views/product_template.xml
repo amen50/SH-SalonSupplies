@@ -30,6 +30,19 @@
                     <field name="product_type" force_save="1"/>
                     <field name="line"  readonly='1' force_save="1"/>
            </xpath>
+           <notebook position="inside">
+                <page string="Discount" attrs="{'invisible': [('product_type', '!=', 'can_be_added')]}">
+                    <group>
+                            <field name="free_product">
+                                <tree editable="bottom">
+                                    <field name="sale_qty"/>
+                                    <field name="sale_qty_to"/>
+                                    <field name="free_qty"/>
+                                </tree>
+                            </field>
+                    </group>
+                </page>
+            </notebook>
         </field>
     </record>
 </odoo>
