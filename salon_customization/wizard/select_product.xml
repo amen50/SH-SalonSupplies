@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="Product_type_selector_form" model="ir.ui.view">
+        <field name='name'>Product.type.selector.form</field>
+        <field name='model'>product.type.selector</field>
+        <field name='arch' type='xml'>
+            <form string='Product Type Update Wizard'>
+               <sheet>
+                   <group>
+                   <field name="customer_type"/>
+                   </group>
+                </sheet>
+                  <footer>
+                      <button string='update' name="change_type" type="object" class="btn-primary"/>
+                       <button string='Cancel' special="cancel"  type="object" class="btn-primary"/>
+                  </footer>
+            </form>
+        </field>
+    </record>
+    <act_window
+        id="action_product_type_selector"
+        res_model="product.type.selector"
+        binding_model="product.product"
+        binding_views="list"
+        target="new"
+        view_mode="form"
+        name="Product Type Update"
+    />
+
+</odoo>

@@ -4,3 +4,4 @@
 
 from . import customer_type_selector
 from . import sales_report
+from . import select_product
