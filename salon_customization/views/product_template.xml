@@ -31,7 +31,7 @@
                     <field name="line"  readonly='1' force_save="1"/>
            </xpath>
            <notebook position="inside">
-                <page string="Discount" attrs="{'invisible': [('product_type', '!=', 'can_be_added')]}">
+                <page string="Discount" attrs="{'invisible': [('product_type', '!=', 'not_add')]}">
                     <group>
                             <field name="free_product">
                                 <tree editable="bottom">
@@ -43,6 +43,32 @@
                     </group>
                 </page>
             </notebook>
+        </field>
+    </record>
+    <record id="salon_customization_product_product_template_inherit_form" model="ir.ui.view">
+        <field name="name">salon.customization.product.template.product.form</field>
+        <field name="model">product.product</field>
+        <field name="inherit_id" ref="product.product_variant_easy_edit_view"/>
+        <field name="arch" type="xml">
+           <xpath expr="//field[@name='default_code']" position="before">
+                    <field name="product_type" force_save="1"/>
+                    <field name="line"  readonly='1' force_save="1"/>
+           </xpath>
+           <xpath expr="//sheet" position="inside">
+               <notebook position="inside">
+                    <page string="Discount" attrs="{'invisible': [('product_type', '!=', 'not_add')]}">
+                        <group>
+                                <field name="free_product">
+                                    <tree editable="bottom">
+                                        <field name="sale_qty"/>
+                                        <field name="sale_qty_to"/>
+                                        <field name="free_qty"/>
+                                    </tree>
+                                </field>
+                        </group>
+                    </page>
+                </notebook>
+           </xpath>
         </field>
     </record>
 </odoo>
