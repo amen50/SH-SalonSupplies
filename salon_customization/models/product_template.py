@@ -26,6 +26,18 @@ class ProductProductInherit(models.Model):
                res.line = line.name
        return res
 
+    def write(self, vals):
+        if vals.get('product_type') == 'not_add':
+            arr = []
+            for line in self.product_tmpl_id.free_product:
+                arr.append((0, 0, {
+                            'sale_qty': line.sale_qty,
+                            'sale_qty_to': line.sale_qty_to,
+                            'free_qty': line.free_qty
+                             }))
+            self.free_product = arr
+        return super(ProductProductInherit, self).write(vals)
+
     @api.onchange('product_type')
     def _product_type_salon_change(self):
         print("product_type", self.product_type)
