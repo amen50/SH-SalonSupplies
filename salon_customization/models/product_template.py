@@ -11,8 +11,8 @@ class ProductTemplateInherit(models.Model):
 class ProductProductInherit(models.Model):
     _inherit = 'product.product'
 
-    product_type = fields.Selection([('can_be_added', 'can be add'),
-                                     ('not_add', 'can not be add'),
+    product_type = fields.Selection([('can_be_added', 'can be Mixed'),
+                                     ('not_add', 'can not be Mixed'),
                                      ('no_free', 'no free item')], default='can_be_added', required=True,
                                     string='Free Item calculation')
     line = fields.Char(string="hold line variant value")
