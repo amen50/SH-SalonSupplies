@@ -9,18 +9,19 @@
                 <form string="Select period">
                         <group>
                             <group >
-                                <field name="datefrom"/>
+                                <field name="datefrom" attrs="{'invisible': [('date_boolean', '!=', False)]}" />
                             </group>
                             <group >
-                                <field name="dateto"/>
+                                <field name="dateto" attrs="{'invisible': [('date_boolean', '!=', False)]}" />
                             </group>
                             <group col="2">
-                                <field name="partner_select" widget="many2many_tags"/>
-                                <field name="partner_boolean" string="All"/>
+                                <field name="partner_select" widget="many2many_tags" attrs="{'invisible': [('partner_boolean', '!=', False)]}" />
+                                <field name="partner_boolean" />
+                                <field name="date_boolean"/>
                             </group>
                             <group >
-                                <field name="customer_id"/>
-                                <field name="customer_boolean" string="All"/>
+                                <field name="customer_id" attrs="{'invisible': [('customer_boolean', '!=', False)]}" />/>
+                                <field name="customer_boolean" />
 
                             </group>
                         </group>
