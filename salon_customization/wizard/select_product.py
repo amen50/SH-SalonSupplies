@@ -7,13 +7,26 @@ class ProductTypeSelector(models.TransientModel):
     _name = "product.type.selector"
     _description = "Wizard used to make and change product the   by batch"
 
-    customer_type = fields.Selection([('can_be_added', 'can be add'),
-                                     ('not_add', 'can not be add'),
-                                     ('no_free', 'no free item')], default='can_be_added', required=True,
-                                    string='Free Item calculation')
+    change_type = fields.Selection([('product_type', 'Product Type'),
+                                    ('tax_type', 'Tax type')], default='product_type', required=True,
+                                   string='Type of change')
+    customer_type = fields.Selection([('can_be_added', 'can be mixed'),
+                                      ('not_add', 'can not be mixed')], default='can_be_added', required=True,
+                                     string='Free Item calculation')
+    taxes_id = fields.Many2many(comodel_name='account.tax', string="Customer Taxes",
+                                domain=[('type_tax_use', '=', 'sale')],
+                                help="Taxes used for deposits")
+    lst_price = fields.Float(string="Sales price")
 
-    def change_type(self):
+    def change_type_fun(self):
         active_ids = self.env.context.get("active_ids")
         partners = self.env['product.product'].search([('id', 'in', active_ids)])
         for line in partners:
-            line.product_type = self.customer_type
+            if self.change_type == 'product_type':
+                line.product_type = self.customer_type
+            elif self.change_type == 'tax_type':
+                print("taxes_id.ids", self.taxes_id.ids)
+                line.taxes_id = self.taxes_id.ids
+                print("tax", line.taxes_id)
+            elif self.change_type == 'sale_price':
+                line.lst_price = self.lst_price

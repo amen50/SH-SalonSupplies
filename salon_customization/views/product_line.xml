@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="salon_product_line_action" model="ir.actions.act_window">
+        <field name="name">Product Line</field>
+        <field name="res_model">salon.product.line</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <record id="salon_product_line_tree_view" model="ir.ui.view">
+    <field name="name">salon.product.line.tree</field>
+    <field name="model">salon.product.line</field>
+    <field name="arch" type="xml">
+        <tree create="false">
+            <field name="name"/>
+        </tree>
+    </field>
+</record>
+
+    <record id="salon_product_line_view_form" model="ir.ui.view">
+        <field name="name">salon.product.line.view.form</field>
+        <field name="model">salon.product.line</field>
+        <field name="arch" type="xml">
+            <form create="false">
+                <sheet>
+                    <group>
+                    <field name="name" readonly="1" force_save="1"/>
+                    <field name="free_product" string=''>
+                        <tree editable="bottom">
+                            <field name="sale_qty"/>
+                            <field name="sale_qty_to"/>
+                            <field name="free_qty"/>
+                        </tree>
+                    </field>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+
+    <menuitem id="salon_product_line_menu"
+              name="Product Line"
+              action="salon_product_line_action"
+              parent="stock.menu_stock_inventory_control"
+              sequence="2"/>
+</odoo>

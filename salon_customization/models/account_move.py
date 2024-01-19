@@ -13,8 +13,9 @@ class AccountMove(models.Model):
         product_quantity = {}
         arr = []
         total = 0
+        self.product_group = [(5, 0, 0)]
         for line in res.invoice_line_ids:
-            product_id = line.product_id.line
+            product_id = line.product_id.line.name
             quantity = line.quantity
             total = total + line.quantity
 
@@ -43,7 +44,7 @@ class AccountMove(models.Model):
         arr = []
         total = 0
         for line in self.invoice_line_ids:
-            product_id = line.product_id.line
+            product_id = line.product_id.line.name
             if not product_id:
                 product_id = ' '
             quantity = line.quantity
@@ -64,9 +65,25 @@ class AccountMove(models.Model):
         self.write({'product_group': arr})
 
 
+class AccountMoveLine(models.Model):
+    _inherit = 'account.move.line'
+
+    def _compute_discount_amount(self):
+        for rec in self:
+           pricelist_price = rec._get_pricelist_price()
+           base_price = rec._get_pricelist_price_before_discount()
+           rec.discount_amt = rec.base_price - rec.pricelist_price
+           rec.discount = rec.discount_amt/base_price * 100
+
+    orginal_price = fields.Float(string='Initial price', store=True)
+    discount_amt = fields.Float(
+        compute='_compute_discount_amount', string="Discount Amount")
+
+
 class ProductGroup(models.Model):
     _name = 'product.group'
 
     name = fields.Char(string="line name", store=True)
     qty = fields.Float(string="quantity", store=True)
     move_rev = fields.Many2one('account.move', string="inverse field")
+    sale_rev = fields.Many2one('sale.order', string="sale field")

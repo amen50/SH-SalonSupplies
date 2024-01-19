@@ -13,8 +13,7 @@ class ResPartner(models.Model):
     total_paid = fields.Float(string="Total Paid Invoice", store=True)
 
     def _total_sales_sum(self):
-        """this method is a compute method that will help to caluclate and store the sales my customer"""
-        print("total sum")
+        """this method is a compute method that will help to calculate and store the sales my customer"""
         for rec in self:
             domain = [('partner_id', '=', rec.id)]
             domain_invoice = [('partner_id', '=', rec.id),('move_type', '=', 'out_invoice')]

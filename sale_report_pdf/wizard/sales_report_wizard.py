@@ -151,14 +151,17 @@ class SalesReportButton(models.TransientModel):
             customer, month = key
             print("customet",customer.name)
             for sales_rep, group_orders in month_orders.items():
-                vals.append({
-                    'customer_id': customer.name if customer.name else '',
-                    'sales_rep': sales_rep.name if sales_rep.name else '',
-                    'product_cat': 'All',
-                    'month': str(month).split('-')[1] if str(month).split('-')[1] else '01',
-                    'total_amount': str(total_amounts[sales_rep][0]),
+                        average = round((float(total_amounts[sales_rep][0])/12),2)
+                        monthly = round(float(total_amounts[sales_rep][0]),2)
+                        vals.append({
+                            'customer_id': customer.name if customer.name else '',
+                            'sales_rep': sales_rep.name if sales_rep.name else '',
+                            'product_cat': 'All',
+                            'month': str(month).split('-')[1] if str(month).split('-')[1] else '01',
+                            'total_amount': str(monthly)+'€',
+                            'average': str(average)+'€'
 
-                })
+                        })
 
         sheet = workbook.add_worksheet("Sales Report")
         format1 = workbook.add_format({'font_size': 22, 'bg_color': '#D3D3D3'})
@@ -174,8 +177,7 @@ class SalesReportButton(models.TransientModel):
         format55.set_align('right')
         format56.set_align('center')
 
-        sheet.merge_range('A1:AG1', '', format5)
-        sheet.merge_range('A2:AG2', '', format5)
+        sheet.merge_range('A1:AG2', '', format5)
         sheet.merge_range('A3:AG3', '', format5)
         sheet.merge_range('A4:AG4', '', format5)
         sheet.merge_range('A5:AG5', '', format5)
@@ -214,13 +216,14 @@ class SalesReportButton(models.TransientModel):
         sheet.merge_range('X8:Y8', "Sep", format5)
         sheet.merge_range('Z8:AA8', "Oct", format5)
         sheet.merge_range('AB8:AC8', "Nov", format5)
-        sheet.merge_range('AD8:AE8', "Des", format5)
+        sheet.merge_range('AD8:AE8', "Dec", format5)
+        sheet.merge_range('AF8:AG8', "Average", format5)
         row_number = 9
         column_number = 0
         column_A = 0
-        print("vals",vals)
+        # _logger.info("vals",vals)
         for val in vals:
-            print("oooooooooooo",val)
+            # _logger.info("oooooooooooo",val)
 
             if val['month'] == '01':
                 sheet.merge_range(row_number, column_number + 0, row_number, column_number + 1, val['customer_id'],
@@ -242,7 +245,7 @@ class SalesReportButton(models.TransientModel):
                 sheet.merge_range(row_number, column_number + 24, row_number, column_number + 25, ' 0 ', format3)
                 sheet.merge_range(row_number, column_number + 26, row_number, column_number + 27, '  0 ', format3)
                 sheet.merge_range(row_number, column_number + 28, row_number, column_number + 29, '  0 ', format3)
-                sheet.merge_range(row_number, column_number + 29, row_number, column_number + 32, ' ', format5)
+                sheet.merge_range(row_number, column_number + 30, row_number, column_number + 32,  val['average'], format3)
                 row_number += 1
             if val['month'] == '02':
                 sheet.merge_range(row_number, column_number + 0, row_number, column_number + 1, val['customer_id'],
@@ -264,7 +267,7 @@ class SalesReportButton(models.TransientModel):
                 sheet.merge_range(row_number, column_number + 24, row_number, column_number + 25, ' 0 ', format3)
                 sheet.merge_range(row_number, column_number + 26, row_number, column_number + 27, '  0 ', format3)
                 sheet.merge_range(row_number, column_number + 28, row_number, column_number + 29, '  0 ', format3)
-                sheet.merge_range(row_number, column_number + 29, row_number, column_number + 32, ' ', format5)
+                sheet.merge_range(row_number, column_number + 30, row_number, column_number + 32,  val['average'], format3)
                 row_number += 1
             if val['month'] == '03':
                 sheet.merge_range(row_number, column_number + 0, row_number, column_number + 1, val['customer_id'],
@@ -286,7 +289,7 @@ class SalesReportButton(models.TransientModel):
                 sheet.merge_range(row_number, column_number + 24, row_number, column_number + 25, ' 0 ', format3)
                 sheet.merge_range(row_number, column_number + 26, row_number, column_number + 27, '  0 ', format3)
                 sheet.merge_range(row_number, column_number + 28, row_number, column_number + 29, '  0 ', format3)
-                sheet.merge_range(row_number, column_number + 29, row_number, column_number + 32, ' ', format5)
+                sheet.merge_range(row_number, column_number + 30, row_number, column_number + 32,  val['average'], format3)
                 row_number += 1
             if val['month'] == '04':
                 sheet.merge_range(row_number, column_number + 0, row_number, column_number + 1, val['customer_id'],
@@ -308,7 +311,7 @@ class SalesReportButton(models.TransientModel):
                 sheet.merge_range(row_number, column_number + 24, row_number, column_number + 25, ' 0 ', format3)
                 sheet.merge_range(row_number, column_number + 26, row_number, column_number + 27, '  0 ', format3)
                 sheet.merge_range(row_number, column_number + 28, row_number, column_number + 29, '  0 ', format3)
-                sheet.merge_range(row_number, column_number + 29, row_number, column_number + 32, ' ', format5)
+                sheet.merge_range(row_number, column_number + 30, row_number, column_number + 32,  val['average'], format3)
                 row_number += 1
             if val['month'] == '05':
                 sheet.merge_range(row_number, column_number + 0, row_number, column_number + 1, val['customer_id'],
@@ -330,7 +333,7 @@ class SalesReportButton(models.TransientModel):
                 sheet.merge_range(row_number, column_number + 24, row_number, column_number + 25, ' 0 ', format3)
                 sheet.merge_range(row_number, column_number + 26, row_number, column_number + 27, '  0 ', format3)
                 sheet.merge_range(row_number, column_number + 28, row_number, column_number + 29, '  0 ', format3)
-                sheet.merge_range(row_number, column_number + 29, row_number, column_number + 32, ' ', format5)
+                sheet.merge_range(row_number, column_number + 30, row_number, column_number + 32,  val['average'], format3)
                 row_number += 1
             if val['month'] == '06':
                 sheet.merge_range(row_number, column_number + 0, row_number, column_number + 1, val['customer_id'],
@@ -352,7 +355,7 @@ class SalesReportButton(models.TransientModel):
                 sheet.merge_range(row_number, column_number + 24, row_number, column_number + 25, ' 0 ', format3)
                 sheet.merge_range(row_number, column_number + 26, row_number, column_number + 27, '  0 ', format3)
                 sheet.merge_range(row_number, column_number + 28, row_number, column_number + 29, '  0 ', format3)
-                sheet.merge_range(row_number, column_number + 29, row_number, column_number + 32, ' ', format5)
+                sheet.merge_range(row_number, column_number + 30, row_number, column_number + 32,  val['average'], format3)
                 row_number += 1
             if val['month'] == '07':
                 sheet.merge_range(row_number, column_number + 0, row_number, column_number + 1, val['customer_id'],
@@ -374,7 +377,7 @@ class SalesReportButton(models.TransientModel):
                 sheet.merge_range(row_number, column_number + 24, row_number, column_number + 25, ' 0 ', format3)
                 sheet.merge_range(row_number, column_number + 26, row_number, column_number + 27, '  0 ', format3)
                 sheet.merge_range(row_number, column_number + 28, row_number, column_number + 29, '  0 ', format3)
-                sheet.merge_range(row_number, column_number + 29, row_number, column_number + 32, ' ', format5)
+                sheet.merge_range(row_number, column_number + 30, row_number, column_number + 32,  val['average'], format3)
                 row_number += 1
             if val['month'] == '08':
                 sheet.merge_range(row_number, column_number + 0, row_number, column_number + 1, val['customer_id'],
@@ -396,7 +399,7 @@ class SalesReportButton(models.TransientModel):
                 sheet.merge_range(row_number, column_number + 24, row_number, column_number + 25, ' 0 ', format3)
                 sheet.merge_range(row_number, column_number + 26, row_number, column_number + 27, '  0 ', format3)
                 sheet.merge_range(row_number, column_number + 28, row_number, column_number + 29, '  0 ', format3)
-                sheet.merge_range(row_number, column_number + 29, row_number, column_number + 32, ' ', format5)
+                sheet.merge_range(row_number, column_number + 30, row_number, column_number + 32,  val['average'], format3)
                 row_number += 1
             if val['month'] == '09':
                 sheet.merge_range(row_number, column_number + 0, row_number, column_number + 1, val['customer_id'],
@@ -418,7 +421,8 @@ class SalesReportButton(models.TransientModel):
                 sheet.merge_range(row_number, column_number + 24, row_number, column_number + 25, ' 0 ', format3)
                 sheet.merge_range(row_number, column_number + 26, row_number, column_number + 27, '  0 ', format3)
                 sheet.merge_range(row_number, column_number + 28, row_number, column_number + 29, '  0 ', format3)
-                sheet.merge_range(row_number, column_number + 29, row_number, column_number + 32, ' ', format5)
+                sheet.merge_range(row_number, column_number + 30, row_number, column_number + 32,  val['average'], format3)
+                
                 row_number += 1
             if val['month'] == '10':
                 sheet.merge_range(row_number, column_number + 0, row_number, column_number + 1, val['customer_id'],
@@ -440,7 +444,8 @@ class SalesReportButton(models.TransientModel):
                                   format3)
                 sheet.merge_range(row_number, column_number + 26, row_number, column_number + 27, '  0 ', format3)
                 sheet.merge_range(row_number, column_number + 28, row_number, column_number + 29, '  0 ', format3)
-                sheet.merge_range(row_number, column_number + 29, row_number, column_number + 32, ' ', format5)
+                sheet.merge_range(row_number, column_number + 30, row_number, column_number + 32,  val['average'], format3)
+                
                 row_number += 1
             if val['month'] == '11':
                 print("11")
@@ -463,7 +468,7 @@ class SalesReportButton(models.TransientModel):
                 sheet.merge_range(row_number, column_number + 26, row_number, column_number + 27, val['total_amount'],
                                   format3)
                 sheet.merge_range(row_number, column_number + 28, row_number, column_number + 29, '  0 ', format3)
-                sheet.merge_range(row_number, column_number + 29, row_number, column_number + 32, ' ', format5)
+                sheet.merge_range(row_number, column_number + 30, row_number, column_number + 32,  val['average'], format3)
                 row_number += 1
             if val['month'] == '12':
                 sheet.merge_range(row_number, column_number + 0, row_number, column_number + 1, val['customer_id'],
@@ -483,13 +488,12 @@ class SalesReportButton(models.TransientModel):
                 sheet.merge_range(row_number, column_number + 22, row_number, column_number + 23, '  0 ', format3)
                 sheet.merge_range(row_number, column_number + 24, row_number, column_number + 25, ' 0 ', format3)
                 sheet.merge_range(row_number, column_number + 26, row_number, column_number + 27, '  0 ', format3)
-                sheet.merge_range(row_number, column_number + 28, row_number, column_number + 29, val['total_amount'],
-                                  format3)
-                sheet.merge_range(row_number, column_number + 29, row_number, column_number + 32, ' ', format5)
+                sheet.merge_range(row_number, column_number + 28, row_number, column_number + 29, val['total_amount'], format3)
+                sheet.merge_range(row_number, column_number + 30, row_number, column_number + 32,  val['average'], format3)
                 row_number += 1
 
         for line in range(row_number, (int(row_number) + 100)):
-            sheet.merge_range(line, 32, line, column_number, '', format5)
+            sheet.merge_range(line, 34, line, column_number+1, '', format5)
 
         workbook.close()
         output.seek(0)

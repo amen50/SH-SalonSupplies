@@ -5,47 +5,30 @@
         <field name="model">product.template</field>
         <field name="inherit_id" ref="product.product_template_only_form_view"/>
         <field name="arch" type="xml">
-        <notebook position="inside">
-            <page string="Discount">
-                        <p>
-                           fre item calculation
-                        </p>
-                        <field name="free_product" string=''>
-                            <tree editable="bottom">
-                                <field name="sale_qty" style="width: 300px;"/>
-                                <field name="sale_qty_to" />
-                                <field name="free_qty"/>
-                                <field name="free_product" context="{'default_parent_id': active_id}" domain="[('product_tmpl_id', '=', parent.id)]" />
-                            </tree>
-                        </field>
-
-            </page>
-        </notebook>
+        <xpath expr="//field[@name='detailed_type']" position="after">
+                    <field name="product_type" force_save="1"/>
+                    <field name="code" force_save="1"/>
+                    <field name="sup_code" force_save="1"/>
+                    <field name="sup" force_save="1"/>
+                    <field name="Shr_descr" force_save="1"/>
+        </xpath>
         </field>
     </record>
-        <record id="salon_customization_product_product_inherit_form" model="ir.ui.view">
+    <record id="salon_customization_product_product_inherit_form" model="ir.ui.view">
         <field name="name">salon.customization.product.template.form</field>
         <field name="model">product.product</field>
         <field name="inherit_id" ref="product.product_normal_form_view"/>
         <field name="arch" type="xml">
            <xpath expr="//field[@name='detailed_type']" position="after">
                     <field name="product_type" force_save="1"/>
-                    <field name="line"  readonly='1' force_save="1"/>
+                    <field name="line"   force_save="1"/>
+                    <field name="size"  force_save="1"/>
+                    <field name="product_type" force_save="1"/>
+                    <field name="code" force_save="1"/>
+                    <field name="sup_code" force_save="1"/>
+                    <field name="sup" force_save="1"/>
+                    <field name="Shr_descr" force_save="1"/>
            </xpath>
-           <notebook position="inside">
-                <page string="Discount" attrs="{'invisible': [('product_type', '!=', 'not_add')]}">
-                        <p>
-                           fre item calculation
-                        </p>
-                        <field name="free_product" string=''>
-                                <tree editable="bottom">
-                                    <field name="sale_qty"/>
-                                    <field name="sale_qty_to"/>
-                                    <field name="free_qty"/>
-                                </tree>
-                            </field>
-                </page>
-            </notebook>
         </field>
     </record>
     <record id="salon_customization_product_product_template_inherit_form" model="ir.ui.view">
@@ -56,21 +39,9 @@
            <xpath expr="//field[@name='default_code']" position="before">
                     <field name="product_type" force_save="1"/>
                     <field name="line"  readonly='1' force_save="1"/>
-           </xpath>
-           <xpath expr="//sheet" position="inside">
-               <notebook position="inside">
-                    <page string="Discount" attrs="{'invisible': [('product_type', '!=', 'not_add')]}">
-                        <group>
-                                <field name="free_product">
-                                    <tree editable="bottom">
-                                        <field name="sale_qty"/>
-                                        <field name="sale_qty_to"/>
-                                        <field name="free_qty"/>
-                                    </tree>
-                                </field>
-                        </group>
-                    </page>
-                </notebook>
+                    <field name="size"  readonly='1' force_save="1"/>
+                    <field name="retail" force_save="1"/>
+
            </xpath>
         </field>
     </record>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <template id="report_saleorder_inherit" inherit_id="sale.report_saleorder_document">
+            <xpath expr="//div[@class='page']/table[@class='table table-sm o_main_table table-borderless mt-4']/tbody[@class='sale_tbody']/tr" position="after">
+                <th name="th_description" class="text-start">Description</th>
+                <th name="th_new_field" class="text-end">Brand</th>
+            </xpath>
+            <xpath expr="//div[@class='page']/table[@class='table table-sm o_main_table table-borderless mt-4']/tbody[@class='sale_tbody']/tr" position="after">
+                <tr t-if="not line.display_type">
+                    <td name="td_name"><span t-field="line.name"/></td>
+                    <td name="td_new_field" class="text-end">
+                        <span t-field="line.product_id.brand_id.name"/>
+                    </td>
+                </tr>
+            </xpath>
+        </template>
+    </data>
+</odoo>

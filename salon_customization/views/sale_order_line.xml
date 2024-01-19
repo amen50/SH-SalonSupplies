@@ -1,19 +1,41 @@
 <odoo>
     <data>
-         <record id="salon_customization_sale_order_tree_inherit" model="ir.ui.view">
+         <record id="salon_customization_sale_order_tree_inherit_new_13" model="ir.ui.view">
             <field name="name">sale.order.tree.inherit</field>
             <field name="model">sale.order</field>
             <field name="inherit_id" ref="sale.view_order_form"/>
             <field name="arch" type="xml">
-                <xpath expr="//field[@name='partner_id']" position="after">
-                    <field name="custom_id" readonly="1" force_save="1" invisible="1"/>
-                    <field name="seq_id" readonly="1" force_save="1" invisible="1"/>
+                <xpath expr="//field[@name='order_line']/tree/field[@name='price_unit']" position="attributes">
+                         <attribute name="readonly">1</attribute>
+                         <attribute name="force_save">1</attribute>
                 </xpath>
-                <xpath expr="//field[@name='order_line']/tree/field[1]" position="before">
-                    <field name="is_free" readonly="1" force_save="1"/>
-                    <field name="custom_id" readonly="1" force_save="1" invisible="1"/>
-                    <field name="updated" readonly="1" force_save="1" invisible="1"/>
-                    <field name="is_free_given" readonly="1" force_save="1" invisible="1"/>
+                <xpath expr="//field[@name='order_line']/tree/field[@name='tax_id']" position="attributes">
+                         <attribute name="readonly">1</attribute>
+                         <attribute name="force_save">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='order_line']/tree/field[@name='product_id']" position="attributes">
+                         <attribute name="optional">show</attribute>
+                </xpath>
+                <xpath expr="//field[@name='order_line']/tree/field[@name='discount']" position="replace">
+                           <field name="discount_per" readonly="1" force_save="1"/>
+
+                </xpath>
+                <xpath expr="//field[@name='order_line']/tree/field[@name='product_template_id']" position="attributes">
+                         <attribute name="optional">hide</attribute>
+                </xpath>
+                <xpath expr="//field[@name='order_line']/tree/field[@name='product_uom_qty']" position="after">
+                    <field name="is_free" invisible="1" force_save="1"/>
+                    <field name="free_item" readonly="1" force_save="1"/>
+                    <field name="orginal_price" readonly="1" force_save="1"/>
+                    <field name="discount_amt" readonly="1" force_save="1"/>
+                </xpath>
+                <xpath expr="//field[@name='order_line']" position="after">
+                    <field name="product_group" invisible="1">
+                      <tree>
+                         <field name="name"/>
+                         <field name="qty"/>
+                      </tree>    
+                    </field>
                 </xpath>
             </field>
         </record>
