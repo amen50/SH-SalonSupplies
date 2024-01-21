@@ -7,7 +7,7 @@ class ProductTemplateInherit(models.Model):
 
     free_product = fields.One2many(string="Free items", comodel_name='free.product', inverse_name='product_template')
     product_type = fields.Selection([('can_be_added', 'Mix and Match'),
-                                     ('not_add', 'can not be Mixed')], default='can_be_added', required=True,
+                                     ('not_add', 'can not be Mixed')], required=True,
                                     string='Free Item calculation')
     code = fields.Char(string="Code")
     sup_code = fields.Char(string="Suppler code")
