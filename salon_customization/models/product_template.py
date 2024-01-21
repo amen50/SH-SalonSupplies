@@ -60,7 +60,7 @@ class ProductProduct(models.Model):
                 print("res.default_code", res.default_code)
             if line.attribute_id.is_line == 'size':
                 res.size = line.name
-        res.product_tmpl_id.product_type = res.product_type
+        res.product_type = res.product_tmpl_id.product_type
         return res
 
     def write(self, vals):
