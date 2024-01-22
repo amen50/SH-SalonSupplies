@@ -25,8 +25,6 @@ class ProductTypeSelector(models.TransientModel):
             if self.change_type == 'product_type':
                 line.product_type = self.customer_type
             elif self.change_type == 'tax_type':
-                print("taxes_id.ids", self.taxes_id.ids)
                 line.taxes_id = self.taxes_id.ids
-                print("tax", line.taxes_id)
             elif self.change_type == 'sale_price':
                 line.lst_price = self.lst_price

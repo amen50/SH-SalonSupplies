@@ -79,15 +79,8 @@ class ProductProduct(models.Model):
                     if att_new.attribute_id.is_line == 'size':
                         self.size = att_new.name
 
-        if vals.get('product_type') == 'not_add':
-            arr = []
-            for line in self.product_tmpl_id.free_product:
-                arr.append((0, 0, {
-                    'sale_qty': line.sale_qty,
-                    'sale_qty_to': line.sale_qty_to,
-                    'free_qty': line.free_qty
-                }))
-            self.free_product = arr
+        if vals.get('product_type'):
+           self.product_tmpl_id.product_type = vals.get('product_type')
         return super(ProductProduct, self).write(vals)
 
     @api.onchange('product_type')
