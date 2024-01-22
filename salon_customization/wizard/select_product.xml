@@ -10,7 +10,7 @@
                    <field name="change_type"/>
                    <field name="customer_type" attrs="{'invisible': [('change_type', '!=', 'product_type')],
                      'required': [('change_type', '!=', 'product_type')]}"/>
-                   <field name="taxes_id"   widget="many2many_tags" attrs="{'invisible': [('change_type', '!=', 'tax_type')]"/>
+                   <field name="taxes_id"   widget="many2many_tags" attrs="{'invisible': [('change_type', '!=', 'tax_type')]}"/>
                    <field name="lst_price" attrs="{'invisible': [('change_type', '!=', 'sale_price')],
                     'required': [('change_type', '!=', 'sale_price')]}"/>
                    </group>
