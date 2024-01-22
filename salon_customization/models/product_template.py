@@ -78,9 +78,6 @@ class ProductProduct(models.Model):
                         self.line = line_new.id
                     if att_new.attribute_id.is_line == 'size':
                         self.size = att_new.name
-
-        if vals.get('product_type'):
-           self.product_tmpl_id.product_type = vals.get('product_type')
         return super(ProductProduct, self).write(vals)
 
     @api.onchange('product_type')
