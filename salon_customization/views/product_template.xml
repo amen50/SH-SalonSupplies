@@ -25,6 +25,7 @@
                     <field name="size"  force_save="1"/>
                     <field name="product_type" force_save="1"/>
                     <field name="code" force_save="1"/>
+                    <field name="retail" force_save="1"/>
                     <field name="sup_code" force_save="1"/>
                     <field name="sup" force_save="1"/>
                     <field name="Shr_descr" force_save="1"/>
